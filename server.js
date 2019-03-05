@@ -1,9 +1,9 @@
 //server using express
 const express        = require('express');
 const app            = express();
-
 const mongoose       = require('mongoose');
 const bodyParser     = require('body-parser');
+const jwt            = require('jsonwebtoken');
 const port = 8000;
 
 var Food = require('./api/models/foodModel'),
@@ -13,13 +13,18 @@ var Food = require('./api/models/foodModel'),
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/antar-makanan');
 
-app.use(bodyParser.urlencoded({ extended: true }));
+//parser body only accept application/json
 app.use(bodyParser.json());
 
-var food_routes = require('./api/routes/foodRoutes'); //importing route
-var auth_routes = require('./api/routes/userRoutes');
-food_routes(app);
-auth_routes(app);
+
+//midleware
+middleware = require('./api/config/middleware');
+app.use(middleware);
+
+//set router
+var routes = require('./api/routes/index');
+routes(app);
+
 app.listen(port, () => {
   console.log('We are live on ' + port);
 });

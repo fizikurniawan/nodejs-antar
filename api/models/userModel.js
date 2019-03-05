@@ -12,10 +12,11 @@ var UserSchema = new Schema({
   },
   email: {
     type: String,
-    uniq: true,
+    unique:true,
     lowercase: true,
     trim: true,
-    required: true
+    required: true,
+    dropDups: true
   },
   hash_password: {
     type: String,
