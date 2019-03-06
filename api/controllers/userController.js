@@ -36,7 +36,7 @@ exports.sign_in = function(req, res){
           res.status(401).json({ message: 'Authentication failed. Please Check your email or password!' });
         }
     }
-  )
+  ).select("+hash_password")
 };
 
 exports.sign_out = function(req, res){

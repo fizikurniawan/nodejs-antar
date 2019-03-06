@@ -41,4 +41,22 @@ exports.detail_order = function(req, res){
   });
 }
 
+exports.list_ongoing = function(req, res){
+  Order.find({user_id: req.user._id, status: 0},
+  function(err, order){
+    if(err)
+      res.send(err)
+    res.json(order)
+  })
+}
+
+exports.list_success = function(req, res){
+  Order.find({user_id: req.user._id, status: 1},
+  function(err, order){
+    if(err)
+      res.send(err)
+    res.json(order)
+  })
+}
+
 

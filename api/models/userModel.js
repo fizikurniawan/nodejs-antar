@@ -20,7 +20,8 @@ var UserSchema = new Schema({
   },
   hash_password: {
     type: String,
-    required: true
+    required: true,
+    select: false
   },
   is_active: {
     type: Number,
