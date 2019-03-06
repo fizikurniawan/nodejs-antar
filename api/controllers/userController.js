@@ -18,11 +18,20 @@ exports.register = function(req, res){
 };
 
 exports.sign_in = function(req, res){
+  var expired = '1d',
+    secret_key = "ANTAR-RESTFULAPIs",
+    token_encode = ''
+
   User.findOne({email: req.body.email
     }, function(err, user){
         if(err) throw err;
         if(user && user.comparePassword(req.body.password)){
-          return res.json({token: jwt.sign({ email: user.email, fullName: user.fullName, _id: user._id}, 'RESTFULAPIs')});
+          token_encode = jwt.sign(
+            {email: user.email, fullName: user.fullName, _id: user._id, is_active: user.is_active},
+            secret_key,
+            {expiresIn: expired}
+          )
+          return res.json({token: token_encode});
         }else{
           res.status(401).json({ message: 'Authentication failed. Please Check your email or password!' });
         }

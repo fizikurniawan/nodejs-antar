@@ -22,6 +22,11 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
+  is_active: {
+    type: Number,
+    required: true,
+    default: 0
+  },
   created_date: {
     type: Date,
     default: Date.now

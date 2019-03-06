@@ -4,7 +4,8 @@ const app            = express();
 const mongoose       = require('mongoose');
 const bodyParser     = require('body-parser');
 const jwt            = require('jsonwebtoken');
-const port = 8000;
+const port           = 8000;
+const errorHandler   = require('./api/config/errorHandler');
 
 var Food = require('./api/models/foodModel'),
   User = require('./api/models/userModel')
@@ -18,7 +19,7 @@ app.use(bodyParser.json());
 
 
 //midleware
-middleware = require('./api/config/middleware');
+middleware = require('./api/config/middlewares/loggedUser');
 app.use(middleware);
 
 //set router
@@ -27,6 +28,7 @@ routes(app);
 
 app.listen(port, () => {
   console.log('We are live on ' + port);
+  errorHandler()
 });
 
 
