@@ -8,7 +8,8 @@ const port           = 8000;
 const errorHandler   = require('./api/config/errorHandler');
 
 var Food = require('./api/models/foodModel'),
-  User = require('./api/models/userModel')
+  User = require('./api/models/userModel'),
+  Order = require('./api/models/orderModel')
 
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
