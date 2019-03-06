@@ -23,12 +23,14 @@ middleware = require('./api/config/middlewares/loggedUser');
 app.use(middleware);
 
 //set router
-var routes = require('./api/routes/index');
-routes(app);
+var apiRouterV1 = require('./api/router/apiRouterV1');
+
+app.use('/api/v1', apiRouterV1)
+
 
 app.listen(port, () => {
-  console.log('We are live on ' + port);
   errorHandler()
+  console.log('We are live on ' + port);
 });
 
 
