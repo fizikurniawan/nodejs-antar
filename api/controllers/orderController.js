@@ -24,12 +24,24 @@ exports.list_all_orders = function(req, res){
 exports.create_order = function(req, res){
   var new_order = new Order({
     user_id: req.user._id,
-    orders: req.body.orders
+    orders: req.body.orders,
+    location: req.body.location,
+    notes: req.body.notes
   });
-  new_order.save(function(err, order){
-    if(err)
-      res.send(err)
-    res.json(order)
+
+  Order.find({user_id: req.user._id, "status": {$in: [0, 1]}}, 
+  function(err, order){
+    if(err){ 
+      throw err
+    }else if(order.length > 0){
+      res.json({message: "Tunggu dulu mang!"})
+    }else{
+      new_order.save(function(err, order){
+        if(err)
+          res.send(err)
+        res.json(order)
+      });
+    }
   });
 }
 
