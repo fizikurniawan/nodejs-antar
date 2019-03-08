@@ -2,6 +2,9 @@
 
 var mongoose = require('mongoose'),
   jwt = require('jsonwebtoken'),
+  email = require('../config/email'),
+  emailTemplate = require('../config/emailTemplate'),
+  handlebars = require('handlebars'),
   bcrypt = require('bcrypt-nodejs'),
   User = mongoose.model('Users');
 
@@ -49,4 +52,33 @@ exports.loginRequired = function(req, res, next){
   }else{
     return res.status(401).json({ message: 'Unauthorized user!' });
   }
+}
+
+exports.send = function(req, res){
+  var mailOptions
+
+  emailTemplate('api/v1/templates/email/register.html', function(err, html){
+    var template =  handlebars.compile(html);
+    var replacements = {
+      name: "Fizi",
+      link: "http://tux.co.id"
+    };
+    var htmlToSend = template(replacements);
+    mailOptions={
+      from: 'TuxLabs Support',
+      to : "fizikurniawan@gmail.com",
+      subject : "Please confirm your Email account",
+      html : htmlToSend
+    }
+
+    email.sendMail(mailOptions, function(err, response){
+      if(err){
+        console.log(err);
+        res.send(err)
+      }else{
+        console.log(response)
+        res.json('email sent')
+      }
+    })
+  })
 }

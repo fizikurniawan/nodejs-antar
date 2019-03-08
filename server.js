@@ -6,6 +6,7 @@ const bodyParser     = require('body-parser');
 const jwt            = require('jsonwebtoken');
 const db             = "antar-makanan";
 const port           = 8000;
+const dotenv         = require('dotenv');
 const errorHandler   = require('./api/v1/config/errorHandler');
 const modelV1        = require('./api/v1/models')
 
@@ -24,6 +25,8 @@ app.use(middleware);
 //set router
 var apiRouterV1 = require('./api/v1/router');
 app.use('/api/v1', apiRouterV1)
+
+dotenv.config();
 
 
 app.listen(port, () => {

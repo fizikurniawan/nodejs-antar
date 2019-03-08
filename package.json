@@ -11,9 +11,12 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.3",
+    "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "handlebars": "^4.1.0",
     "jsonwebtoken": "^8.5.0",
-    "mongoose": "^5.4.17"
+    "mongoose": "^5.4.17",
+    "nodemailer": "^5.1.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"
