@@ -28,6 +28,10 @@ app.use('/api/v1', apiRouterV1)
 
 dotenv.config();
 
+var today = new Date();
+var tomorrow = new Date();
+tomorrow.setDate(today.getDate()+1);
+console.log(tomorrow)
 
 app.listen(port, () => {
   errorHandler()
