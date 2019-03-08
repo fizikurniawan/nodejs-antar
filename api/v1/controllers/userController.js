@@ -15,8 +15,6 @@ exports.register = function(req, res){
   var newUser = new User(req.body),
     base = 'http://'+req.headers.host
 
-  console.log(base)
-
   newUser.hash_password = bcrypt.hashSync(req.body.password);
 
   newUser.save(function(err, user){
@@ -27,7 +25,7 @@ exports.register = function(req, res){
     token.save(function(error){
       if(error)
         console.log(error)
-        res.json({message: 'error'})
+        res.status(500).send({msg: error.messsage})
     })
     module.exports.send(req, res, user, base+url+token.token);
     return res.json({message: 'Register success, please check '+user.email+' for verify your account.'});
@@ -54,10 +52,6 @@ exports.sign_in = function(req, res){
         }
     }
   ).select("+hash_password")
-};
-
-exports.sign_out = function(req, res){
-
 };
 
 exports.loginRequired = function(req, res, next){
@@ -113,4 +107,42 @@ exports.emailConfirmation = function(req, res, next){
       })
     })
   })
+}
+
+exports.resendVerification = function(req, res){
+  var base = 'http://'+req.headers.host
+
+  User.findOne({email: req.body.email}, function(err, user){
+    if (!user) return res.status(400).send({ msg: 'We were unable to find a user with that email.' });
+
+    if((user.is_active == 1 || 2)) return res.status(400).send({ msg: 'This account has already been verified. Please log in.' });
+
+    var token = new Token({user_id: user.id, token: crypto.randomBytes(64).toString('hex')})
+
+    token.save(function(err){
+      if (err) { return res.status(500).send({ msg: err.message }); } 
+    })
+    module.exports.send(req, res, user, base+url+token.token);
+    return res.json({message: 'Resend verification success, please check '+user.email+' for verify your account.'});
+  })
+}
+
+exports.changePassword = function(req, res){
+  console.log(req.user._id)
+  if(req.user){
+    User.findOne({_id: req.user._id},
+    function(err, user){
+      if(err) return res.status(400).send({msg: 'We were unable to find a user'})
+
+      user.hash_password = bcrypt.hashSync(req.body.new_password);
+      user.save(function(err){
+        if(err) return res.status(500).send({msg: err.message})
+
+        res.json({message: 'Change password successfully'})
+      })
+    });
+  }else{
+    return res.status(402).send({msg: 'Please sign in with your email and password'})
+  }
+
 }
