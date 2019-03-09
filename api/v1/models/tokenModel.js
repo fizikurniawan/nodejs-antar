@@ -1,8 +1,6 @@
 'use strict';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-//var today = new Date();
-//var tomorrow = new Date();
 
 var TokenSchema = new Schema({
   user_id: {

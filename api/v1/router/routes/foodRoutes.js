@@ -1,4 +1,5 @@
 'use strict';
+
 var food = require('../../controllers/foodController')
 var auth = require('../../controllers/userController')
 var adminMiddleware = require('../../config/middlewares/adminMiddleware'),

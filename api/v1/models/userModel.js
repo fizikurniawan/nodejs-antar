@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
   bcrypt = require('bcrypt-nodejs');
 
 var UserSchema = new Schema({
-  fullName: {
+  full_name: {
     type: String,
     trim: true,
     required: true

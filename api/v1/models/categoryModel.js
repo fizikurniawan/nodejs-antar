@@ -1,4 +1,5 @@
 'use strict';
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -10,10 +11,6 @@ var CategorySchema = new Schema ({
   created_date: {
     type: Date,
     default: Date.now
-  },
-  price: {
-    type: Number,
-    default: 0
   }
 })
 
