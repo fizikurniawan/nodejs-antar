@@ -24,10 +24,21 @@ exports.register = function(req, res){
     var token = new Token({user_id: user._id, token: crypto.randomBytes(64).toString('hex')})
     token.save(function(error){
       if(error)
-        console.log(error)
-        res.status(500).send({msg: error.messsage})
+        res.status(500).send({msg: error.messages})
     })
-    module.exports.send(req, res, user, base+url+token.token);
+
+    var replacements = {
+      name: user.full_name,
+      link: base+url+token.token
+    }
+
+    var mail_options = {
+      to: user.email,
+      template: 'api/v1/templates/email/register.html',
+      subject: 'Verification Account',
+    }
+
+    module.exports.sendEmail(req, res, replacements, mail_options);
     return res.json({message: 'Register success, please check '+user.email+' for verify your account.'});
   })
 };
@@ -62,24 +73,15 @@ exports.loginRequired = function(req, res, next){
   }
 }
 
-exports.send = function(req, res, user, url){
-  var mailOptions
-
-  emailTemplate('api/v1/templates/email/register.html', function(err, html){
+exports.sendEmail = function(req, res, replacements, mail_options){
+  console.log(mail_options);
+  emailTemplate(mail_options['template'], function(err, html){
     var template =  handlebars.compile(html);
-    var replacements = {
-      name: user.fullName,
-      link: url
-    };
     var htmlToSend = template(replacements);
-    mailOptions={
-      from: 'TuxLabs Support',
-      to : user.email,
-      subject : "Please confirm your Email account",
-      html : htmlToSend
-    }
 
-    email.sendMail(mailOptions, function(err, response){
+    mail_options.html = htmlToSend
+
+    email.sendMail(mail_options, function(err, response){
       if(err){
         console.log(err);
         res.send(err)
@@ -144,5 +146,36 @@ exports.changePassword = function(req, res){
   }else{
     return res.status(402).send({msg: 'Please sign in with your email and password'})
   }
+}
 
+exports.resetPassword = function(req, res){
+  User.findOne({email: req.body.email}, function(err, user){
+    console.log(req.body.email)
+    if(!user) res.status(400).send({msg: 'We were unable to find a user with '+req.body.email})
+
+    var token = new Token({user_id: user._id, token: crypto.randomBytes(64).toString('hex')})
+
+    token.save(function(err){
+      if(err) res.status(500).send({msg: err.message});
+
+      res.status(200).send({msg: 'Please check '+req.body.email +' for reset your password'})
+    })
+  })
+}
+
+exports.actionResetPassword = function(req, res){
+  Token.findOne({token: req.query.token}, function(err, token){
+    if (!token) return res.status(400).send({ type: 'not-verified', msg: 'We were unable to find a valid token. Your token my have expired.' });
+
+    User.findOne({_id: token.user_id}, function(err, user){
+      if(!user) res.status(400).send({msg: 'We were unable to find user with this token.'})
+
+      user.hash_password = bcrypt.hashSync(req.body.new_password);
+      user.save(function(err){
+        if(err) return res.status(500).send({msg: err.message})
+
+        res.json({message: 'Reset assword successfully, you can sign in with new password.'})
+      })
+    })
+  })
 }
