@@ -124,6 +124,18 @@ exports.resendVerification = function(req, res){
     token.save(function(err){
       if (err) { return res.status(500).send({ msg: err.message }); } 
     })
+
+    var replacements = {
+      name: user.full_name,
+      link: base+url+token.token
+    }
+
+    var mail_options = {
+      to: user.email,
+      template: 'api/v1/templates/email/register.html',
+      subject: 'Verification Account',
+    }
+
     module.exports.send(req, res, user, base+url+token.token);
     return res.json({message: 'Resend verification success, please check '+user.email+' for verify your account.'});
   })
