@@ -136,7 +136,7 @@ exports.resendVerification = function(req, res){
       subject: 'Verification Account',
     }
 
-    module.exports.send(req, res, user, base+url+token.token);
+    module.exports.sendEmail(req, res, replacements, mail_options);
     return res.json({message: 'Resend verification success, please check '+user.email+' for verify your account.'});
   })
 }
@@ -161,8 +161,8 @@ exports.changePassword = function(req, res){
 }
 
 exports.resetPassword = function(req, res){
+  var base = 'http://'+req.headers.host
   User.findOne({email: req.body.email}, function(err, user){
-    console.log(req.body.email)
     if(!user) res.status(400).send({msg: 'We were unable to find a user with '+req.body.email})
 
     var token = new Token({user_id: user._id, token: crypto.randomBytes(64).toString('hex')})
@@ -172,6 +172,19 @@ exports.resetPassword = function(req, res){
 
       res.status(200).send({msg: 'Please check '+req.body.email +' for reset your password'})
     })
+
+    var replacements = {
+      name: user.full_name,
+      link: base+url+token.token
+    }
+
+    var mail_options = {
+      to: user.email,
+      template: 'api/v1/templates/email/reset_password.html',
+      subject: 'Reset Password',
+    }
+
+    module.exports.sendEmail(req, res, replacements, mail_options)
   })
 }
 
