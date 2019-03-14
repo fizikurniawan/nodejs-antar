@@ -9,4 +9,5 @@ route.get('/confirmation', user.emailConfirmation);
 route.post('/resend', user.resendVerification);
 route.post('/change-password', user.changePassword)
 route.post('/reset-password', user.resetPassword)
+route.get('/reset_password', user.actionResetPassword)
 module.exports = route;

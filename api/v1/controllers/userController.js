@@ -9,7 +9,8 @@ var mongoose = require('mongoose'),
   crypto = require('crypto'),
   User = mongoose.model('Users'),
   Token = mongoose.model('Tokens'),
-  url = '/api/v1/auth/confirmation?token='
+  confirmation_url = '/api/v1/auth/confirmation?token=',
+  reset_url = '/api/v1/auth/reset_password?token='
 
 exports.register = function(req, res){
   var newUser = new User(req.body),
@@ -29,7 +30,7 @@ exports.register = function(req, res){
 
     var replacements = {
       name: user.full_name,
-      link: base+url+token.token
+      link: base+confirmation_url+token.token
     }
 
     var mail_options = {
@@ -127,7 +128,7 @@ exports.resendVerification = function(req, res){
 
     var replacements = {
       name: user.full_name,
-      link: base+url+token.token
+      link: base+confirmation_url+token.token
     }
 
     var mail_options = {
@@ -175,7 +176,7 @@ exports.resetPassword = function(req, res){
 
     var replacements = {
       name: user.full_name,
-      link: base+url+token.token
+      link: base+reset_url+token.token
     }
 
     var mail_options = {
